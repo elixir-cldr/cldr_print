@@ -1,0 +1,9 @@
+%{
+  "cldr_utils": {:hex, :cldr_utils, "2.0.5", "eba0f4cc86861b74f2c1180fe7f6fa25f9e9a3b06365fa7468213c9ec3fd392c", [:mix], [{:decimal, "~> 1.5", [hex: :decimal, repo: "hexpm", optional: false]}], "hexpm"},
+  "decimal": {:hex, :decimal, "1.7.0", "30d6b52c88541f9a66637359ddf85016df9eb266170d53105f02e4a67e00c5aa", [:mix], [], "hexpm"},
+  "ex_cldr": {:hex, :ex_cldr, "2.2.7", "b903881712eddcc939ce37c21a850fb46ca9949d0c9e0f75ef792a274f425826", [:mix], [{:cldr_utils, "~> 2.0", [hex: :cldr_utils, repo: "hexpm", optional: false]}, {:decimal, "~> 1.5", [hex: :decimal, repo: "hexpm", optional: false]}, {:gettext, "~> 0.13", [hex: :gettext, repo: "hexpm", optional: true]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}, {:nimble_parsec, "~> 0.5", [hex: :nimble_parsec, repo: "hexpm", optional: false]}, {:plug, "~> 1.4", [hex: :plug, repo: "hexpm", optional: true]}], "hexpm"},
+  "ex_cldr_currencies": {:hex, :ex_cldr_currencies, "2.2.0", "7215e23c7027e206463e9b20dc83c3b1cc65753c285a213196e2631695187f28", [:mix], [{:ex_cldr, "~> 2.0", [hex: :ex_cldr, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm"},
+  "ex_cldr_numbers": {:hex, :ex_cldr_numbers, "2.3.0", "0195cd0835c74de292581a16220d01e30c130a1d0666155016e0bfe2738bd051", [:mix], [{:decimal, "~> 1.5", [hex: :decimal, repo: "hexpm", optional: false]}, {:ex_cldr, "~> 2.1", [hex: :ex_cldr, repo: "hexpm", optional: false]}, {:ex_cldr_currencies, "~> 2.0", [hex: :ex_cldr_currencies, repo: "hexpm", optional: false]}, {:jason, "~> 1.0", [hex: :jason, repo: "hexpm", optional: true]}], "hexpm"},
+  "jason": {:hex, :jason, "1.1.2", "b03dedea67a99223a2eaf9f1264ce37154564de899fd3d8b9a21b1a6fd64afe7", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm"},
+  "nimble_parsec": {:hex, :nimble_parsec, "0.5.0", "90e2eca3d0266e5c53f8fbe0079694740b9c91b6747f2b7e3c5d21966bba8300", [:mix], [], "hexpm"},
+}
