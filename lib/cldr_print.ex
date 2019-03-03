@@ -126,11 +126,15 @@ defmodule Cldr.Print do
   * In no case does a non-existent or small field width cause truncation of a field; padding
     takes place only if the specified field width exceeds the actual width.
 
+  * `printf/3` calls `IO.write/2` and therefore there are no control characters emitted
+    unless provided in the format string. This is consisten with the `C` implementation
+    but different from `IO.puts/2`.
+
   """
   def printf(format, args, options \\ []) do
     {device, options} = Keyword.pop(options, :device, :stdio)
     with {:ok, io_list} <- lprintf(format, args, options) do
-      IO.puts(device, io_list)
+      IO.write(device, io_list)
     end
   end
 

@@ -115,8 +115,8 @@ Zero or more of the following flags:
 | -     | A minus sign `-' which specifies left adjustment of the output in the indicated field. |
 | +     | A `+` character specifying that there should always be a sign placed before the number when using signed formats. |
 | space | A space character specifying that a blank should be left before a positive number for a signed format. A `+` overrides a space if both are used. |
-| 0     | A zero `0` character indicating that zero-padding should be used rather than blank-padding.  A `-` overrides a `0` if both are used. |
-| '     | Formats a number with digit grouping applied. The group size and grouping character are determined based upon the current processes locale or the `:locale` option to `printf/3` if provided. |
+| 0     | A zero `0` character indicating that zero-padding should be used rather than blank-padding.  A `-` overrides a `0` if both are used. Is not applied for `o`, `x`, `X` formats. |
+| '     | Formats a number with digit grouping applied. The group size and grouping character are determined based upon the current processes locale or the `:locale` option to `printf/3` if provided. Is not applied for formats `o`, `x`, `X` formats. |
 | I     | Formats a number using the native number system digits of the current processes locale or the `:locale` option to `printf/3` if provided. The option `:number_system` if provided takes precedence over this flag. |
 
 ### Field Width
@@ -150,28 +150,27 @@ uppercase.
 
 ### Notes
 
-* The grouping separator, decimal point and exponent characters are defined in the current
-  processes locale or as specified in the `:locale` option to `printf/3`.
+* The grouping separator, decimal point and exponent characters are defined in the current processes locale or as specified in the `:locale` option to `printf/3`.
 
-* In no case does a non-existent or small field width cause truncation of a field; padding
-  takes place only if the specified field width exceeds the actual width.
+* In no case does a non-existent or small field width cause truncation of a field; padding takes place only if the specified field width exceeds the actual width.
 
 ## Todo
 
-* [ ] Generate functions that know what the localised grouping is
-
-* [ ] Do integer values, printed with a `%f` format, get fractional digits?
-
 * [ ] `g` and `G` don't yet use the right algorithm to determine whether to use `f` or `e`
-
-* [ ] Decimals aren't supported in all formats yet
 
 * [ ] Formats `a` and `A` aren't implemented
 
-* [ ] Precision for Decimals seems to print differently to precision for floats
+* [ ] The `#` is not validated for a, A, e, E, f, F, g and G formats. There seems to be some inconsistent implementations around that need further investigation
 
-* [ ] The `#` alternative form flag is not fully compliant for all format types
+* [x] Precision for Decimals seems to print differently to precision for floats
 
+* [x] Generate functions that know what the localised grouping is. Done in an update to `ex_cldr_numbers`
+
+* [x] Use the localised grouping definition with the `'` flag
+
+* [x] Do integer values, printed with a `%f` format, get fractional digits?
+
+* [x] Decimals aren't supported in all formats yet
 ## Installation
 
 ```elixir

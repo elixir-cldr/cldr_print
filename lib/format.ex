@@ -7,7 +7,7 @@ defmodule Cldr.Print.Format do
   def format("d" = type, format, options) do
     backend = Keyword.get(options, :backend, Cldr.Print.Backend)
     formatter = Module.concat(backend, Number.Formatter.Decimal)
-    meta = meta_from_format(type, format)
+    meta = meta_from_format(type, format, backend, options)
     value = format[:value]
     options = maybe_set_number_system(format, backend, options)
 
@@ -17,6 +17,14 @@ defmodule Cldr.Print.Format do
     end
   end
 
+  def format("i", format, options) do
+    {_, format} = Keyword.get_and_update(format, :value, fn value ->
+      {value, truncate(value)}
+    end)
+    format = Keyword.put(format, :precision, 0)
+    format("d", format, options)
+  end
+
   def format("f", format, options) do
     format = maybe_add_precision(format, format[:precision])
     format("d", format, options)
@@ -24,7 +32,7 @@ defmodule Cldr.Print.Format do
 
   def format("u", format, options) do
     {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, abs(value)}
+      {value, absolute(value)}
     end)
     format("d", format, options)
   end
@@ -78,38 +86,70 @@ defmodule Cldr.Print.Format do
 
   def format("o", format, options) do
     {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 8) |> String.downcase}
+      {value, Integer.to_string(truncate(value), 8) |> String.downcase}
     end)
 
-    format = maybe_add_zero_x(format, "0", format[:leading_zero_x])
+    format =
+      format
+      |> maybe_add_zero_x("0", format[:leading_zero_x], options)
+      |> maybe_add_plus(format[:with_plus], options)
+
     format("s", format, options)
   end
 
   def format("x", format, options) do
     {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 16) |> String.downcase}
+      {value, Integer.to_string(truncate(value), 16) |> String.downcase}
     end)
 
-    format = maybe_add_zero_x(format, "0x", format[:leading_zero_x])
+    format =
+      format
+      |> maybe_add_zero_x("0x", format[:leading_zero_x], options)
+      |> maybe_add_plus(format[:with_plus], options)
+
     format("s", format, options)
   end
 
   def format("X", format, options) do
     {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 16)}
+      {value, Integer.to_string(truncate(value), 16)}
     end)
 
-    format = maybe_add_zero_x(format, "0X", format[:leading_zero_x])
+    format =
+      format
+      |> maybe_add_zero_x("0X", format[:leading_zero_x], options)
+      |> maybe_add_plus(format[:with_plus], options)
+
     format("s", format, options)
   end
 
-  def meta_from_format("d", format) do
+  def meta_from_format("d", format, backend, options) do
     Meta.new
     |> maybe_add_plus(format[:with_plus])
     |> maybe_add_fraction_digits(format[:precision])
     |> maybe_add_zero_fill(format, format[:zero_fill], format[:width])
-    |> maybe_add_group(format[:group])
+    |> maybe_add_group(format[:group], backend, options)
     |> maybe_add_exponent(format[:exponent])
+  end
+
+  defp truncate(number) when is_integer(number) do
+    number
+  end
+
+  defp truncate(number) when is_float(number) do
+    trunc(number)
+  end
+
+  defp truncate(%Decimal{} = number) do
+    Decimal.round(number, 0)
+  end
+
+  def absolute(number) when is_number(number) do
+    abs(number)
+  end
+
+  def absolute(%Decimal{} = number) do
+    Decimal.abs(number)
   end
 
   defp slice(string, nil) do
