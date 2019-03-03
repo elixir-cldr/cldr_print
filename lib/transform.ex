@@ -14,22 +14,16 @@ defmodule Cldr.Print.Transform do
     Meta.put_fraction_digits(meta, 0, digits)
   end
 
-  def maybe_add_padding(meta, nil, _) do
-    meta
+  def maybe_add_padding(string, nil, _) do
+    string
   end
 
-  def maybe_add_padding(meta, padding, nil) do
-    meta = Meta.put_padding_length(meta, padding)
-    positive_format = meta.format[:positive]
-    negative_format = meta.format[:negative]
-    Meta.put_format(meta, [{:pad, nil} | positive_format], [{:pad, nil} | negative_format])
+  def maybe_add_padding(string, padding, nil) do
+    String.pad_leading(string, padding)
   end
 
-  def maybe_add_padding(meta, padding, true) do
-    meta = Meta.put_padding_length(meta, padding)
-    positive_format = meta.format[:positive]
-    negative_format = meta.format[:negative]
-    Meta.put_format(meta, positive_format ++ [{:pad, nil}], negative_format ++ [{:pad, nil}])
+  def maybe_add_padding(string, padding, true) do
+    String.pad_trailing(string, padding)
   end
 
   def maybe_add_plus(meta, nil) do
@@ -42,12 +36,21 @@ defmodule Cldr.Print.Transform do
     Meta.put_format(meta, positive_format, negative_format)
   end
 
-  def maybe_add_zero_fill(meta, nil) do
+  def maybe_add_zero_fill(meta, nil, _, _) do
     meta
   end
 
-  def maybe_add_zero_fill(meta, true) do
-    Meta.put_integer_digits(meta, meta.padding_length, meta.padding_length)
+  def maybe_add_zero_fill(meta, _, nil, _) do
+    meta
+  end
+
+  # Need to account for the + and - signs
+  def maybe_add_zero_fill(meta, fill?, width, nil) do
+    maybe_add_zero_fill(meta, fill?, width, -1)
+  end
+
+  def maybe_add_zero_fill(meta, true, width, precision) do
+    Meta.put_integer_digits(meta, width - precision - 1)
   end
 
   def maybe_add_group(meta, nil) do

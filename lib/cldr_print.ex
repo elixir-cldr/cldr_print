@@ -4,13 +4,19 @@ defmodule Cldr.Print do
 
   import Cldr.Print.Transform
 
-  def printf(format, args, options \\ []) when is_list(args) do
+  def printf(format, args, options \\ [])
+
+  def printf(format, args, options) when is_list(args) do
     with {:ok, tokens} <- Parser.parse(format) do
       tokens
       |> splice_arguments(args, options, &format/2)
       |> Enum.reverse
       |> IO.iodata_to_binary
     end
+  end
+
+  def printf(format, arg, options) do
+    printf(format, [arg], options)
   end
 
   def splice_arguments(tokens, args, options, fun \\ &(&1)) do
@@ -41,7 +47,9 @@ defmodule Cldr.Print do
     backend = Keyword.get(options, :backend, Cldr.Print.Backend)
     formatter = Module.concat(backend, Number.Formatter.Decimal)
     meta = meta_from_format(type, format)
+
     formatter.to_string(format[:value], meta, options)
+    |> maybe_add_padding(format[:width], format[:left_justify])
   end
 
   def format("f", format, options) do
@@ -126,12 +134,11 @@ defmodule Cldr.Print do
 
   def meta_from_format("d", format) do
     Meta.new
-    |> maybe_add_fraction_digits(format[:precision])
     |> maybe_add_plus(format[:with_plus])
-    |> maybe_add_zero_fill(format[:zero_fill])
+    |> maybe_add_fraction_digits(format[:precision])
+    |> maybe_add_zero_fill(format[:zero_fill], format[:width], format[:precision])
     |> maybe_add_group(format[:group])
     |> maybe_add_exponent(format[:exponent])
-    |> maybe_add_padding(format[:width], format[:left_justify])
   end
 
 end

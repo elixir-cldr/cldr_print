@@ -1,4 +1,4 @@
 defmodule Cldr.Print.Backend do
-  use Cldr
+  use Cldr, providers: [Cldr.Number]
 
 end
