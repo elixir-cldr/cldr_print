@@ -66,14 +66,17 @@ defmodule Cldr.Print.Transform do
   end
 
   def maybe_add_zero_x(format, string, true) do
-    {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, string <> value}
+    {_, format} = Keyword.get_and_update(format, :value, fn
+      value when is_number(value) and value > 0 ->
+        {value, string <> value}
+      value ->
+        {value, value}
     end)
 
     format
   end
 
-  @max_precision 15
+  @max_precision 6
   def maybe_add_precision(format, nil) do
     Keyword.put(format, :precision, @max_precision)
   end

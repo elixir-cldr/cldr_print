@@ -24,7 +24,7 @@ defmodule Cldr.Print.Parser.Core do
   end
 
   def group do
-    utf8_string([?,], min: 1)
+    utf8_string([?'], min: 1)
   end
 
   def digit do
