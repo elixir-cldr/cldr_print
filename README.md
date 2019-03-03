@@ -171,6 +171,7 @@ uppercase.
 * [x] Do integer values, printed with a `%f` format, get fractional digits?
 
 * [x] Decimals aren't supported in all formats yet
+
 ## Installation
 
 ```elixir
