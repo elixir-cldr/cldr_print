@@ -57,6 +57,13 @@ defmodule Cldr.Print do
     format("d", format, options)
   end
 
+  def format("u", format, options) do
+    {_, format} = Keyword.get_and_update(format, :value, fn value ->
+      {value, abs(value)}
+    end)
+    format("d", format, options)
+  end
+
   def format("e", format, options) do
     format = Keyword.put(format, :exponent, true)
 
@@ -95,17 +102,16 @@ defmodule Cldr.Print do
 
   def format("s", format, _options) do
     padding = format[:width] || 0
+    precision = format[:precision]
+    left_or_right = format[:left_justify]
     value = format[:value]
 
-    if format[:left_justify] do
-      String.pad_trailing(value, padding)
-    else
-      String.pad_leading(value, padding)
-    end
+    value
+    |> slice(precision)
+    |> justify(padding, left_or_right)
   end
 
   def format("o", format, options) do
-
     {_, format} = Keyword.get_and_update(format, :value, fn value ->
       {value, Integer.to_string(trunc(value), 8) |> String.downcase}
     end)
@@ -139,6 +145,22 @@ defmodule Cldr.Print do
     |> maybe_add_zero_fill(format[:zero_fill], format[:width], format[:precision])
     |> maybe_add_group(format[:group])
     |> maybe_add_exponent(format[:exponent])
+  end
+
+  defp slice(string, nil) do
+    string
+  end
+
+  defp slice(string, precision) do
+    String.slice(string, 0, precision)
+  end
+
+  defp justify(string, padding, true) do
+    String.pad_trailing(string, padding)
+  end
+
+  defp justify(string, padding, nil) do
+    String.pad_leading(string, padding)
   end
 
 end

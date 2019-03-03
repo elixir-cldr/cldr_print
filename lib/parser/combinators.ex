@@ -44,7 +44,7 @@ defmodule Cldr.Print.Parser.Core do
   end
 
   def format_type do
-    ascii_string([?d, ?o, ?f, ?x, ?X, ?s, ?e, ?E, ?g, ?G], 1)
+    ascii_string([?d, ?o, ?f, ?x, ?X, ?s, ?e, ?E, ?g, ?G, ?u], 1)
   end
 
   def literal do

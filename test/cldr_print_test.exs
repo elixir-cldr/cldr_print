@@ -2,7 +2,6 @@ defmodule Cldr.Print.Test do
   use ExUnit.Case
   doctest Cldr.Print
 
-
   test "decimal printf with field width" do
     assert Cldr.Print.printf("%3d", [0]) ==	"  0"
     assert Cldr.Print.printf("%3d", [123456789]) ==	"123456789"
@@ -48,5 +47,14 @@ defmodule Cldr.Print.Test do
     assert Cldr.Print.printf("'%s'", "Hello") ==	"'Hello'"
     assert Cldr.Print.printf("'%10s'", "Hello") ==	"'     Hello'"
     assert Cldr.Print.printf("'%-10s'", "Hello") ==	"'Hello     '"
+
+    assert Cldr.Print.printf("'%s'", "Hello, world!") == "'Hello, world!'"
+    assert Cldr.Print.printf("'%15s'", "Hello, world!") == "'  Hello, world!'"
+    assert Cldr.Print.printf("'%.10s'", "Hello, world!") == "'Hello, wor'"
+    assert Cldr.Print.printf("'%-10s'", "Hello, world!") == "'Hello, world!'"
+    assert Cldr.Print.printf("'%-15s'", "Hello, world!") == "'Hello, world!  '"
+    assert Cldr.Print.printf("'%.15s'", "Hello, world!") == "'Hello, world!'"
+    assert Cldr.Print.printf("'%15.10s'", "Hello, world!") == "'     Hello, wor'"
+    assert Cldr.Print.printf("'%-15.10s'", "Hello, world!") == "'Hello, wor     '"
   end
 end
