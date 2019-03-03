@@ -1,4 +1,9 @@
 defmodule Cldr.Print do
+  @moduledoc """
+  Implements `printf/3`, `sprintf/3` and `lprintf/3` in a manner
+  largely compatible with the standard `C` language implementations.
+  """
+
   alias Cldr.Print.Parser
   alias Cldr.Print.Format
 
@@ -8,6 +13,54 @@ defmodule Cldr.Print do
   The format is a character string which contains two types of objects:
   plain characters, which are simply copied to standard output and format
   specifications, each of which causes printing of the next successive argument.
+
+  ## Arguments
+
+  * `format` is a format string. Information on the definition of a
+    format string is below.
+
+  * `args` is a list of arguments that are formatted according to
+    the directives in the format string. The number of `args` in the list
+    must be at least equal to the number of format specifiers in the format
+    string.
+
+  * `options` is a keyword list defining how the number is to be formatted. The
+    valid options are:
+
+  ## Options
+
+  * `backend` is any `Cldr` backend. That is, any module that
+    contains `use Cldr`. The default is the included `Cldr.Print.Backend`
+    which is configured with only the locale `en`.
+
+  * `:rounding_mode`: determines how a number is rounded to meet the precision
+    of the format requested. The available rounding modes are `:down`,
+    :half_up, :half_even, :ceiling, :floor, :half_down, :up. The default is
+    `:half_even`.
+
+  * `:number_system`: determines which of the number systems for a locale
+    should be used to define the separators and digits for the formatted
+    number. If `number_system` is an `atom` then `number_system` is
+    interpreted as a number system. See
+    `Cldr.Number.System.number_systems_for/2`. If the `:number_system` is
+    `binary` then it is interpreted as a number system name. See
+    `Cldr.Number.System.number_system_names_for/2`. The default is `:default`.
+
+  * `:locale`: determines the locale in which the number is formatted. See
+    `Cldr.known_locale_names/0`. The default is`Cldr.get_locale/0` which is the
+    locale currently in affect for this `Process` and which is set by
+    `Cldr.put_locale/1`.
+
+   * `:device` which is used to define the output device for `printf/3`.  The default is
+     `:stdout`.
+
+  ## Returns
+
+  * `:ok` on success
+
+  * `{:error, {exception, reason}}` if an error is detected
+
+  ## Format definition
 
   Each format specification is introduced by the percent character (`%`).
   The remainder of the format specification includes, in the following order:

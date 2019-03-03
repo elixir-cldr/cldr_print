@@ -83,6 +83,9 @@ defmodule Cldr.Print.MixProject do
         "LICENSE.md",
         "CHANGELOG.md"
       ],
+      groups_for_modules: [
+        "Default CLDR Backend": ~r/Cldr.Print.Backend/
+      ],
       skip_undefined_reference_warnings_on: ["changelog"]
     ]
   end

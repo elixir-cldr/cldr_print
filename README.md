@@ -54,34 +54,37 @@ To zero-fill the result add a zero `0` after the `%` symbol:
 
 Here are some further examples including a minimum width specification, left-justified, zero-filled, as well as a plus sign for positive numbers.
 
-Description	Code	Result
-At least five wide	printf("'%5d'", 10);	'   10'
-At least five-wide, left-justified	printf("'%-5d'", 10);	'10   '
-At least five-wide, zero-filled	printf("'%05d'", 10);	'00010'
-At least five-wide, with a plus sign	printf("'%+5d'", 10);	'  +10'
-Five-wide, plus sign, left-justified	printf("'%-+5d'", 10);	'+10  '
+| Description                             | Function call                | Result            |
+| --------------------------------------- | ---------------------------- | ----------------: |
+| At least five wide	                    | printf("'%5d'", 10)          | '   10'           |
+| At least five-wide, left-justified      |	printf("'%-5d'", 10)         | '10   '           |
+| At least five-wide, zero-filled	        | printf("'%05d'", 10)         | '00010'           |
+| At least five-wide, with a plus sign	  | printf("'%+5d'", 10)         | '  +10'           |
+| Five-wide, plus sign, left-justified	  | printf("'%-+5d'", 10)        | '+10  '           |
 
 ### Floating Point Formatting
 
 Here are several examples showing how to format floating-point numbers:
 
-Description	Code	Result
-Print one position after the decimal	printf("'%.1f'", 10.3456);	'10.3'
-Two positions after the decimal	printf("'%.2f'", 10.3456);	'10.35'
-Eight-wide, two positions after the decimal	printf("'%8.2f'", 10.3456);	'   10.35'
-Eight-wide, four positions after the decimal	printf("'%8.4f'", 10.3456);	' 10.3456'
-Eight-wide, two positions after the decimal, zero-filled	printf("'%08.2f'", 10.3456);	'00010.35'
-Eight-wide, two positions after the decimal, left-justified	printf("'%-8.2f'", 10.3456);	'10.35   '
-Printing a much larger number with that same format	printf("'%-8.2f'", 101234567.3456);	'101234567.35'
+| Description                                 | Function call                | Result            |
+| ------------------------------------------- | ---------------------------- | ----------------: |
+| Print one position after the decimal	      | printf("'%.1f'", 10.3456)    | '10.3'            |
+| Two positions after the decimal	            | printf("'%.2f'", 10.3456)    | '10.35'           |
+| Eight-wide, two positions after the decimal	| printf("'%8.2f'", 10.3456)   | '   10.35'        |
+| Eight-wide, four positions after the decimal| printf("'%8.4f'", 10.3456)   | ' 10.3456'        |
+| Eight-wide, two positions after the decimal, zero-filled | printf("'%08.2f'", 10.3456) | '00010.35' |
+| Eight-wide, two positions after the decimal, left-justified	| printf("'%-8.2f'", 10.3456) | '10.35   ' |
+| Printing a much larger number with that same format	| printf("'%-8.2f'",101234567.3456) | '101234567.35' |
 
 ### String Formatting
 
-Here are several examples that show how to format a string:
+Here are some examples of string formatting:
 
-Description	Code	Result
-A simple string	printf("'%s'", "Hello");	'Hello'
-A string with a minimum length	printf("'%10s'", "Hello");	'     Hello'
-Minimum length, left-justified	printf("'%-10s'", "Hello");	'Hello     '
+| Description                                 | Function call                | Result            |
+| ------------------------------------------- | ---------------------------- | ----------------: |
+| A simple string	                            | printf("'%s'", "Hello")      | 'Hello'           |
+| A string with a minimum length	            | printf("'%10s'", "Hello")    | '     Hello'      |
+| Minimum length, left-justified	            | printf("'%-10s'", "Hello")   | 'Hello     '      |
 
 ## Format Specification
 
@@ -152,8 +155,6 @@ uppercase.
 
 * In no case does a non-existent or small field width cause truncation of a field; padding
   takes place only if the specified field width exceeds the actual width.
-
-"""
 
 ## Todo
 
