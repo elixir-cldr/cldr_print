@@ -1,8 +1,6 @@
 defmodule Cldr.Print do
   alias Cldr.Print.Parser
-  alias Cldr.Number.Format.Meta
-
-  import Cldr.Print.Transform
+  alias Cldr.Print.Format
 
   @doc """
   Formats and prints its arguments under control of a format.
@@ -35,7 +33,8 @@ defmodule Cldr.Print do
   | +     | A `+` character specifying that there should always be a sign placed before the number when using signed formats. |
   | space | A space character specifying that a blank should be left before a positive number for a signed format. A `+` overrides a space if both are used. |
   | 0     | A zero `0` character indicating that zero-padding should be used rather than blank-padding.  A `-` overrides a `0` if both are used. |
-  | '     | Formats a number with digit grouping applied. The group size and grouping character are determined based upon the current processes locale or as defined by the `:locale` option to `printf/3`. |
+  | '     | Formats a number with digit grouping applied. The group size and grouping character are determined based upon the current processes locale or the `:locale` option to `printf/3` if provided. |
+  | I     | Formats a number using the native number system digits of the current processes locale or the `:locale` option to `printf/3` if provided. The option `:number_system` if provided takes precedence over this flag. |
 
   ## Field Width
 
@@ -75,22 +74,91 @@ defmodule Cldr.Print do
     takes place only if the specified field width exceeds the actual width.
 
   """
-  def printf(format, args, options \\ [])
-
-  def printf(format, args, options) when is_list(args) do
-    with {:ok, tokens} <- Parser.parse(format) do
-      tokens
-      |> splice_arguments(args, options, &format/2)
-      |> Enum.reverse
-      |> IO.iodata_to_binary
+  def printf(format, args, options \\ []) do
+    {device, options} = Keyword.pop(options, :device, :stdio)
+    with {:ok, io_list} <- lprintf(format, args, options) do
+      IO.puts(device, io_list)
     end
   end
 
-  def printf(format, arg, options) do
-    printf(format, [arg], options)
+  @doc """
+  Prints a `string` or raises after applying a format to
+  a list of arguments.
+
+  The arguments and options are the same as those for `printf/3`
+
+  """
+  def printf!(format, args, options \\ []) do
+    case printf(format, args, options) do
+      {:ok, string} -> string
+      {:error, {exception, reason}} -> raise exception, reason
+    end
   end
 
-  def splice_arguments(tokens, args, options, fun \\ &(&1)) do
+  @doc """
+  Returns a `{:ok, string}` after applying a format to a list of arguments.
+
+  The arguments and options are the same as those for `printf/3`
+
+  """
+  def sprintf(format, args, options \\ []) do
+    with {:ok, io_list} <- lprintf(format, args, options) do
+      {:ok, IO.iodata_to_binary(io_list)}
+    end
+  end
+
+  @doc """
+  Returns a `string` or raises after applying a format to
+  a list of arguments.
+
+  The arguments and options are the same as those for `printf/3`
+
+  """
+  def sprintf!(format, args, options \\ []) do
+    case sprintf(format, args, options) do
+      {:ok, string} -> string
+      {:error, {exception, reason}} -> raise exception, reason
+    end
+  end
+
+  @doc """
+  Returns an `{:ok, io_list}` after applying a format to a list of arguments.
+
+  The arguments and options are the same as those for `printf/3`
+
+  """
+  def lprintf(format, args, options \\ [])
+
+  def lprintf(format, args, options) when is_list(args) do
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &format/2) do
+      {:ok, Enum.reverse(io_list)}
+    end
+  end
+
+  def lprintf(format, arg, options) do
+    lprintf(format, [arg], options)
+  end
+
+  @doc """
+  Returns an `io_list` or raises after applying a format to
+  a list of arguments.
+
+  The arguments and options are the same as those for `printf/3`
+
+  """
+  def lprintf!(format, args, options \\ []) do
+    case lprintf(format, args, options) do
+      {:ok, string} -> string
+      {:error, {exception, reason}} -> raise exception, reason
+    end
+  end
+
+  #
+  # Helpers
+  #
+
+  defp splice_arguments(tokens, args, options, fun) do
     {_, acc} =
       Enum.reduce(tokens, {args, []}, fn
         token, {args, acc} when is_binary(token) ->
@@ -105,133 +173,13 @@ defmodule Cldr.Print do
           token = fun.(Keyword.put(token, :value, arg), options)
           {remaining_args, [token | acc]}
       end)
-    acc
+    {:ok, acc}
   rescue
     e in ArgumentError -> {:error, {ArgumentError, e.message}}
+    e in Cldr.UnknownLocaleError -> {:error, {Cldr.UnknownLocaleError, e.message}}
   end
 
-  def format(token, options) do
-    format(token[:format_type], token, options)
+  defp format(token, options) do
+    Format.format(token[:format_type], token, options)
   end
-
-  def format("d" = type, format, options) do
-    backend = Keyword.get(options, :backend, Cldr.Print.Backend)
-    formatter = Module.concat(backend, Number.Formatter.Decimal)
-    meta = meta_from_format(type, format)
-
-    formatter.to_string(format[:value], meta, options)
-    |> maybe_add_padding(format[:width], format[:left_justify])
-  end
-
-  def format("f", format, options) do
-    format = maybe_add_precision(format, format[:precision])
-    format("d", format, options)
-  end
-
-  def format("u", format, options) do
-    {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, abs(value)}
-    end)
-    format("d", format, options)
-  end
-
-  def format("e", format, options) do
-    format = Keyword.put(format, :exponent, true)
-
-    format("d", format, options)
-    |> String.downcase
-  end
-
-  def format("E", format, options) do
-    format = Keyword.put(format, :exponent, true)
-
-    format("d", format, options)
-    |> String.upcase
-  end
-
-  def format("g", format, options) do
-    format_f = format("f", format, options)
-    format_e = format("e", format, options)
-
-    if String.length(format_f) <= String.length(format_e) do
-      format_f
-    else
-      format_e
-    end
-  end
-
-  def format("G", format, options) do
-    format_f = format("F", format, options)
-    format_e = format("E", format, options)
-
-    if String.length(format_f) <= String.length(format_e) do
-      format_f
-    else
-      format_e
-    end
-  end
-
-  def format("s", format, _options) do
-    padding = format[:width] || 0
-    precision = format[:precision]
-    left_or_right = format[:left_justify]
-    value = format[:value]
-
-    value
-    |> slice(precision)
-    |> justify(padding, left_or_right)
-  end
-
-  def format("o", format, options) do
-    {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 8) |> String.downcase}
-    end)
-
-    format = maybe_add_zero_x(format, "0", format[:leading_zero_x])
-    format("s", format, options)
-  end
-
-  def format("x", format, options) do
-    {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 16) |> String.downcase}
-    end)
-
-    format = maybe_add_zero_x(format, "0x", format[:leading_zero_x])
-    format("s", format, options)
-  end
-
-  def format("X", format, options) do
-    {_, format} = Keyword.get_and_update(format, :value, fn value ->
-      {value, Integer.to_string(trunc(value), 16)}
-    end)
-
-    format = maybe_add_zero_x(format, "0X", format[:leading_zero_x])
-    format("s", format, options)
-  end
-
-  def meta_from_format("d", format) do
-    Meta.new
-    |> maybe_add_plus(format[:with_plus])
-    |> maybe_add_fraction_digits(format[:precision])
-    |> maybe_add_zero_fill(format[:zero_fill], format[:width], format[:precision])
-    |> maybe_add_group(format[:group])
-    |> maybe_add_exponent(format[:exponent])
-  end
-
-  defp slice(string, nil) do
-    string
-  end
-
-  defp slice(string, precision) do
-    String.slice(string, 0, precision)
-  end
-
-  defp justify(string, padding, true) do
-    String.pad_trailing(string, padding)
-  end
-
-  defp justify(string, padding, nil) do
-    String.pad_leading(string, padding)
-  end
-
 end
