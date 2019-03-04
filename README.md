@@ -150,7 +150,7 @@ uppercase.
 
 ### Notes
 
-* The grouping separator, decimal point and exponent characters are defined in the current processes locale or as specified in the `:locale` option to `printf/3`.
+* The grouping separator, decimal point and exponent characters are defined in the current process's locale or as specified in the `:locale` option to `printf/3`.
 
 * In no case does a non-existent or small field width cause truncation of a field; padding takes place only if the specified field width exceeds the actual width.
 
@@ -162,17 +162,7 @@ uppercase.
 
 * [ ] The `#` is not validated for a, A, e, E, f, F, g and G formats. There seems to be some inconsistent implementations around that need further investigation
 
-* [x] Precision for Decimals seems to print differently to precision for floats
-
-* [x] Generate functions that know what the localised grouping is. Done in an update to `ex_cldr_numbers`
-
-* [x] Use the localised grouping definition with the `'` flag
-
-* [x] Do integer values, printed with a `%f` format, get fractional digits?
-
-* [x] Decimals aren't supported in all formats yet
-
-* [x] Ensure flag `-` overrides flag `0` (it doesn't currently)
+* [ ] The *space* flag is not implemented
 
 ## Installation
 

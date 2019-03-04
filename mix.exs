@@ -26,7 +26,7 @@ defmodule Cldr.Print.MixProject do
 
   def description do
     """
-    Printf/sprintf compatible functions for Elixir
+    Printf/sprintf functions and macros for Elixir
     """
   end
 
@@ -59,9 +59,10 @@ defmodule Cldr.Print.MixProject do
   defp deps do
     [
       {:nimble_parsec, "~> 0.5"},
-      {:ex_cldr_numbers, github: "kipcole9/cldr_numbers"},
+      {:ex_cldr_numbers, "~> 2.4"},
       {:jason, "~> 1.0"},
-      {:ex_doc, "~> 0.19"}
+      {:ex_doc, "~> 0.19"},
+      {:benchee, "~> 0.14", only: [:dev, :test]}
     ]
   end
 

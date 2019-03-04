@@ -5,7 +5,7 @@ defmodule Cldr.Print do
   """
 
   alias Cldr.Print.Parser
-  alias Cldr.Print.Format
+  import Cldr.Print.Splice
 
   @doc """
   Formats and prints its arguments under control of a format.
@@ -139,20 +139,6 @@ defmodule Cldr.Print do
   end
 
   @doc """
-  Prints a `string` or raises after applying a format to
-  a list of arguments.
-
-  The arguments and options are the same as those for `printf/3`
-
-  """
-  def printf!(format, args, options \\ []) do
-    case printf(format, args, options) do
-      {:ok, string} -> string
-      {:error, {exception, reason}} -> raise exception, reason
-    end
-  end
-
-  @doc """
   Returns a `{:ok, string}` after applying a format to a list of arguments.
 
   The arguments and options are the same as those for `printf/3`
@@ -211,32 +197,65 @@ defmodule Cldr.Print do
     end
   end
 
-  #
-  # Helpers
-  #
+  @doc false
+  defmacro mprintf(format, args, options \\ []) do
+    args = if is_list(args), do: args, else: [args]
 
-  defp splice_arguments(tokens, args, options, fun) do
-    {_, acc} =
-      Enum.reduce(tokens, {args, []}, fn
-        token, {args, acc} when is_binary(token) ->
-          {args, [token | acc]}
-
-        token, {[], _acc} when is_list(token) ->
-          raise ArgumentError, "The number of arguments must be at least equal to " <>
-          "to the number of format placeholders."
-
-        token, {args, acc} when is_list(token) ->
-          [arg | remaining_args] = args
-          token = fun.(Keyword.put(token, :value, arg), options)
-          {remaining_args, [token | acc]}
-      end)
-    {:ok, acc}
-  rescue
-    e in ArgumentError -> {:error, {ArgumentError, e.message}}
-    e in Cldr.UnknownLocaleError -> {:error, {Cldr.UnknownLocaleError, e.message}}
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &identity/2) do
+      quote do
+        IO.write Keyword.get(unquote(options), :device, :stdout),
+          IO.iodata_to_binary(format_list(unquote(Enum.reverse(io_list))))
+      end
+    end
   end
 
-  defp format(token, options) do
-    Format.format(token[:format_type], token, options)
+  @doc false
+  defmacro msprintf(format, args, options \\ []) do
+    args = if is_list(args), do: args, else: [args]
+
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &identity/2) do
+      quote do
+        {:ok, format_list(unquote(Enum.reverse(io_list))) |> IO.iodata_to_binary}
+      end
+    end
   end
+
+  @doc false
+  defmacro msprintf!(format, args, options \\ []) do
+    args = if is_list(args), do: args, else: [args]
+
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &identity/2) do
+      quote do
+        format_list(unquote(Enum.reverse(io_list))) |> IO.iodata_to_binary
+      end
+    end
+  end
+
+  @doc false
+  defmacro mlprintf(format, args, options \\ []) do
+    args = if is_list(args), do: args, else: [args]
+
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &identity/2) do
+      quote do
+        {:ok, format_list(unquote(Enum.reverse(io_list)))}
+      end
+    end
+  end
+
+  @doc false
+  defmacro mlprintf!(format, args, options \\ []) do
+    args = if is_list(args), do: args, else: [args]
+
+    with {:ok, tokens} <- Parser.parse(format),
+         {:ok, io_list} <- splice_arguments(tokens, args, options, &identity/2) do
+      quote do
+        format_list(unquote(Enum.reverse(io_list)))
+      end
+    end
+  end
+
 end
