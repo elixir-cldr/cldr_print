@@ -155,7 +155,6 @@ uppercase.
 * In no case does a non-existent or small field width cause truncation of a field; padding takes place only if the specified field width exceeds the actual width.
 
 ## Todo
-* [ ] Ensure flag `-` overrides flag `0` (it doesn't currently)
 
 * [ ] `g` and `G` don't yet use the right algorithm to determine whether to use `f` or `e`
 
@@ -172,6 +171,8 @@ uppercase.
 * [x] Do integer values, printed with a `%f` format, get fractional digits?
 
 * [x] Decimals aren't supported in all formats yet
+
+* [x] Ensure flag `-` overrides flag `0` (it doesn't currently)
 
 ## Installation
 

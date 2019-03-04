@@ -174,4 +174,8 @@ defmodule Cldr.Print.Test do
     assert Cldr.Print.sprintf!("%.2f", Decimal.new(34510)) == "34510.00"
   end
 
+  test "that left jutify takes precedence over zero-fill" do
+    assert Cldr.Print.sprintf!("%-07d", 34510) == "34510  "
+    assert Cldr.Print.sprintf!("%-7d", 34510) == "34510  "
+  end
 end

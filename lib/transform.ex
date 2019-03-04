@@ -34,15 +34,20 @@ defmodule Cldr.Print.Transform do
     Meta.put_format(meta, positive_format, negative_format)
   end
 
-  def maybe_add_zero_fill(meta, _, _, nil) do
+  # meta, format, left_justify?, zero_fill?, width
+  def maybe_add_zero_fill(meta, _format, true, _, _) do
     meta
   end
 
-  def maybe_add_zero_fill(meta, _, nil, _) do
+  def maybe_add_zero_fill(meta, _format, _, nil, _) do
     meta
   end
 
-  def maybe_add_zero_fill(meta, format, true, width) when is_integer(width) do
+  def maybe_add_zero_fill(meta, _format, _, _, nil) do
+    meta
+  end
+
+  def maybe_add_zero_fill(meta, format, nil, true, width) when is_integer(width) do
     precision = format[:precision] || 0
     adjust_for_sign = if format[:with_plus] || less_than_zero(format[:value]) < 0, do: -1, else: 0
     adjust_for_float = if format[:format_type] == "f", do: -1, else: 0
@@ -131,17 +136,6 @@ defmodule Cldr.Print.Transform do
     symbols_for(format, options).plus_sign
   end
 
-  defp symbols_for(format, options) do
-    system_name = if format[:native_number_system], do: :native, else: :default
-    backend = Keyword.get(options, :backend, Cldr.Print.Backend)
-    symbol_module = Module.concat(backend, Number.Symbol)
-    system_module = Module.concat(backend, Number.System)
-    locale = Keyword.get(options, :locale, backend.get_locale())
-    number_system = system_module.number_systems_for!(locale)[system_name]
-    {:ok, symbols} = symbol_module.number_symbols_for(locale, number_system)
-    symbols
-  end
-
   @default_precision 6
   def maybe_add_precision(format, nil) do
     Keyword.put(format, :precision, @default_precision)
@@ -163,13 +157,28 @@ defmodule Cldr.Print.Transform do
 
   def maybe_set_number_system(format, backend, options) do
     if !options[:number_sytem] && format[:native_number_system] do
-      system_module = Module.concat(backend, Number.System)
-      locale = Keyword.get(options, :locale, backend.get_locale())
-      {:ok, systems} = system_module.number_systems_for(locale)
+      systems = systems_for(backend, options)
       Keyword.put(options, :number_system, systems[:native])
     else
       options
     end
   end
 
+  defp symbols_for(format, options) do
+    system_name = if format[:native_number_system], do: :native, else: :default
+    backend = Keyword.get(options, :backend, Cldr.Print.Backend)
+    symbol_module = Module.concat(backend, Number.Symbol)
+    system_module = Module.concat(backend, Number.System)
+    locale = Keyword.get(options, :locale, backend.get_locale())
+    number_system = system_module.number_systems_for!(locale)[system_name]
+    {:ok, symbols} = symbol_module.number_symbols_for(locale, number_system)
+    symbols
+  end
+
+  defp systems_for(backend, options) do
+    system_module = Module.concat(backend, Number.System)
+    locale = Keyword.get(options, :locale, backend.get_locale())
+    {:ok, systems} = system_module.number_systems_for(locale)
+    systems
+  end
 end

@@ -127,7 +127,7 @@ defmodule Cldr.Print.Format do
     Meta.new
     |> maybe_add_plus(format[:with_plus])
     |> maybe_add_fraction_digits(format[:precision])
-    |> maybe_add_zero_fill(format, format[:zero_fill], format[:width])
+    |> maybe_add_zero_fill(format, format[:left_justify], format[:zero_fill], format[:width])
     |> maybe_add_group(format[:group], backend, options)
     |> maybe_add_exponent(format[:exponent])
   end
