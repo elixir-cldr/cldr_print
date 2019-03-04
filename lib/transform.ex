@@ -145,14 +145,15 @@ defmodule Cldr.Print.Transform do
     format
   end
 
-  def maybe_add_exponent(meta, nil) do
+  def maybe_add_exponent(meta, nil, _) do
     meta
   end
 
-  def maybe_add_exponent(meta, true) do
+  def maybe_add_exponent(meta, true, precision) do
     meta
     |> Meta.put_exponent_digits(1)
     |> Meta.put_exponent_sign(true)
+    |> Meta.put_scientific_rounding_digits(precision + 1)
   end
 
   def maybe_set_number_system(format, backend, options) do

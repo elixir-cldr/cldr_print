@@ -52,24 +52,20 @@ defmodule Cldr.Print.Format do
   end
 
   def format("g", format, options) do
-    format_f = format("f", format, options)
     format_e = format("e", format, options)
-
-    if String.length(format_f) <= String.length(format_e) do
-      format_f
-    else
+    if choose_f_or_e(format_e, format, "e") == :e do
       format_e
+    else
+      format("f", format, options)
     end
   end
 
   def format("G", format, options) do
-    format_f = format("F", format, options)
     format_e = format("E", format, options)
-
-    if String.length(format_f) <= String.length(format_e) do
-      format_f
-    else
+    if choose_f_or_e(format_e, format, "E") == :e do
       format_e
+    else
+      format("F", format, options)
     end
   end
 
@@ -129,7 +125,7 @@ defmodule Cldr.Print.Format do
     |> maybe_add_fraction_digits(format[:precision])
     |> maybe_add_zero_fill(format, format[:left_justify], format[:zero_fill], format[:width])
     |> maybe_add_group(format[:group], backend, options)
-    |> maybe_add_exponent(format[:exponent])
+    |> maybe_add_exponent(format[:exponent], format[:precision])
   end
 
   defp truncate(number) when is_integer(number) do
@@ -166,5 +162,11 @@ defmodule Cldr.Print.Format do
 
   defp justify(string, padding, nil) do
     String.pad_leading(string, padding)
+  end
+
+  defp choose_f_or_e(string, format, type) do
+    [_, exponent] = String.split(string, type)
+    exponent = String.to_integer(exponent)
+    if (exponent < -4) || (exponent > format[:precision]), do: :e, else: :f
   end
 end
