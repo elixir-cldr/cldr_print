@@ -156,7 +156,7 @@ uppercase.
 
 ## Todo
 
-* [ ] `g` and `G` don't yet use the right algorithm to determine whether to use `f` or `e`
+* [x] `g` and `G` shouldn't print fractional digits if they are 0
 
 * [ ] Formats `a` and `A` aren't implemented
 

@@ -149,9 +149,10 @@ defmodule Cldr.Print.Transform do
     meta
   end
 
+  @exponent_digits 2
   def maybe_add_exponent(meta, true, precision) do
     meta
-    |> Meta.put_exponent_digits(1)
+    |> Meta.put_exponent_digits(@exponent_digits)
     |> Meta.put_exponent_sign(true)
     |> Meta.put_scientific_rounding_digits(precision + 1)
   end
