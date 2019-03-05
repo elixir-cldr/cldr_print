@@ -54,7 +54,7 @@ defmodule Cldr.Print.Format do
   def format("g", format, options) do
     format_e = format("e", format, options)
     if choose_f_or_e(format_e, format, "e") == :e do
-      format_e
+      maybe_remove_zero_fraction(format_e)
     else
       format("f", format, options)
     end
@@ -63,7 +63,7 @@ defmodule Cldr.Print.Format do
   def format("G", format, options) do
     format_e = format("E", format, options)
     if choose_f_or_e(format_e, format, "E") == :e do
-      format_e
+      maybe_remove_zero_fraction(format_e)
     else
       format("F", format, options)
     end

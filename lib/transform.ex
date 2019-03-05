@@ -166,6 +166,17 @@ defmodule Cldr.Print.Transform do
     end
   end
 
+  def maybe_remove_zero_fraction(string) do
+    [integer, dot, fraction, exp, exponent] =
+      Regex.split(~r/[eE.]/, string, include_captures: true)
+
+    if String.to_integer(fraction) == 0 do
+      integer <> exp <> exponent
+    else
+      integer <> dot <> fraction <> exp <> exponent
+    end
+  end
+
   defp symbols_for(format, options) do
     system_name = if format[:native_number_system], do: :native, else: :default
     backend = Keyword.get(options, :backend, Cldr.Print.Backend)

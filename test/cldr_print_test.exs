@@ -178,4 +178,13 @@ defmodule Cldr.Print.Test do
     assert Cldr.Print.sprintf!("%-07d", 34510) == "34510  "
     assert Cldr.Print.sprintf!("%-7d", 34510) == "34510  "
   end
+  
+  test "the g format" do
+    assert {:ok, "1e+04"} = Cldr.Print.sprintf "%.2g", Decimal.new("10000.0001")
+    assert {:ok, "1.23e+04"} =  Cldr.Print.sprintf "%.2g", Decimal.new("12345.0001")
+    assert {:ok, "1.23e+04"} = Cldr.Print.sprintf "%.2g", Decimal.new("12345.00000001")
+    assert {:ok, "1.23e+04"} = Cldr.Print.sprintf "%.2g", Decimal.new("12345.0")       
+    assert {:ok, "1.23e+04"} = Cldr.Print.sprintf "%.2g", Decimal.new("12345")  
+    assert {:ok, "123.34"} = Cldr.Print.sprintf "%.2g", Decimal.new("123.343566")
+  end
 end
