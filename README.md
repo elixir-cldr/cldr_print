@@ -156,8 +156,6 @@ uppercase.
 
 ## Todo
 
-* [x] `g` and `G` shouldn't print fractional digits if they are 0
-
 * [ ] Formats `a` and `A` aren't implemented
 
 * [ ] The `#` is not validated for a, A, e, E, f, F, g and G formats. There seems to be some inconsistent implementations around that need further investigation
