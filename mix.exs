@@ -1,7 +1,7 @@
 defmodule Cldr.Print.MixProject do
   use Mix.Project
 
-  @version "0.2.0"
+  @version "0.3.0"
 
   def project do
     [
@@ -13,6 +13,7 @@ defmodule Cldr.Print.MixProject do
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
+      source_url: "https://github.com/elixir-cldr/cldr_print",
       package: package(),
       test_coverage: [tool: ExCoveralls],
       aliases: aliases(),
@@ -61,7 +62,7 @@ defmodule Cldr.Print.MixProject do
   defp deps do
     [
       {:nimble_parsec, "~> 0.5"},
-      {:ex_cldr_numbers, "~> 2.6"},
+      {:ex_cldr_numbers, "~> 2.9"},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.19"},
       {:benchee, "~> 0.14", only: [:dev, :test]}
@@ -70,9 +71,9 @@ defmodule Cldr.Print.MixProject do
 
   def links do
     %{
-      "GitHub" => "https://github.com/kipcole9/ex_cldr_print",
-      "Readme" => "https://github.com/kipcole9/ex_cldr_print/blob/v#{@version}/README.md",
-      "Changelog" => "https://github.com/kipcole9/ex_cldr_print/blob/v#{@version}/CHANGELOG.md"
+      "GitHub" => "https://github.com/elixir-cldr/cldr_print",
+      "Readme" => "https://github.com/elixir-cldr/cldr_print/blob/v#{@version}/README.md",
+      "Changelog" => "https://github.com/elixir-cldr/cldr_print/blob/v#{@version}/CHANGELOG.md"
     }
   end
 
