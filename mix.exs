@@ -7,7 +7,6 @@ defmodule Cldr.Print.MixProject do
     [
       app: :ex_cldr_print,
       version: @version,
-      licenses: ["Apache-2.0"],
       elixir: "~> 1.5",
       docs: docs(),
       build_embedded: Mix.env() == :prod,
