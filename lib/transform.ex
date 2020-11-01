@@ -66,7 +66,7 @@ defmodule Cldr.Print.Transform do
 
   @zero Decimal.new(0)
   defp less_than_zero(%Decimal{} = number) do
-    if Decimal.cmp(number, @zero) == :lt do
+    if Cldr.Decimal.compare(number, @zero) == :lt do
       -1
     else
       0
