@@ -127,7 +127,7 @@ defmodule Cldr.Print do
     takes place only if the specified field width exceeds the actual width.
 
   * `printf/3` calls `IO.write/2` and therefore there are no control characters emitted
-    unless provided in the format string. This is consisten with the `C` implementation
+    unless provided in the format string. This is consistent with the `C` implementation
     but different from `IO.puts/2`.
 
   """
