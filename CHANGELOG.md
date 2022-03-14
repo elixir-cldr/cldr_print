@@ -1,6 +1,14 @@
+# Changelog for Cldr Print v1.0.0
+
+This is the changelog for Cldr Print v1.0.0 released on March 14th.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
+
+### Enhancements
+
+* Release 1.0.0 since the API hasn't changed in 2 years!  Requires Elixir 1.10.
+
 # Changelog for Cldr Print v0.4.0
 
-This is the changelog for Cldr Print v0.4.0 released on November 1st.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
+This is the changelog for Cldr Print v0.4.0 released on November 1st, 2020.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
 
 ### Enhancements
 

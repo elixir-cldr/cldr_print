@@ -1,13 +1,13 @@
 defmodule Cldr.Print.MixProject do
   use Mix.Project
 
-  @version "0.4.0"
+  @version "1.0.0"
 
   def project do
     [
       app: :ex_cldr_print,
       version: @version,
-      elixir: "~> 1.5",
+      elixir: "~> 1.10",
       docs: docs(),
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -45,12 +45,11 @@ defmodule Cldr.Print.MixProject do
   defp package do
     [
       maintainers: ["Kip Cole"],
-      licenses: ["Apache 2.0"],
+      licenses: ["Apache-2.0"],
       logo: "logo.png",
       links: links(),
       files: [
         "lib",
-        "config",
         "mix.exs",
         "README*",
         "CHANGELOG*",
