@@ -4,6 +4,12 @@
 
 This is the changelog for Cldr Print v1.0.1 released on April 27th, 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
 
+### Enhancements
+
+* Relax `nimble_parsec` requirement. Thanks to @cjbottaro. Closes #2.
+
+* Fix configuration of the default cldr backend.
+
 ## Cldr Print v1.0.0
 
 This is the changelog for Cldr Print v1.0.0 released on March 14th 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
