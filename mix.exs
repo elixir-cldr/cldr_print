@@ -1,7 +1,7 @@
 defmodule Cldr.Print.MixProject do
   use Mix.Project
 
-  @version "1.0.0"
+  @version "1.0.1"
 
   def project do
     [
@@ -60,7 +60,7 @@ defmodule Cldr.Print.MixProject do
 
   defp deps do
     [
-      {:nimble_parsec, "~> 0.5"},
+      {:nimble_parsec, "~> 0.5 or ~> 1.0"},
       {:ex_cldr_numbers, "~> 2.16"},
       {:jason, "~> 1.0"},
       {:ex_doc, "~> 0.19"},

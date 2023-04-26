@@ -1,8 +1,12 @@
 # Changelog
 
+## Cldr Print v1.0.1
+
+This is the changelog for Cldr Print v1.0.1 released on April 27th, 2023.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
+
 ## Cldr Print v1.0.0
 
-This is the changelog for Cldr Print v1.0.0 released on March 14th.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
+This is the changelog for Cldr Print v1.0.0 released on March 14th 2022.  For older changelogs please consult the release tag on [GitHub](https://github.com/kipcole9/cldr/tags)
 
 ### Enhancements
 
