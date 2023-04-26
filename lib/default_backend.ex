@@ -1,4 +1,4 @@
 defmodule Cldr.Print.Backend do
-  use Cldr, providers: [Cldr.Number], supress_warnings: true
+  use Cldr, providers: [Cldr.Number], suppress_warnings: true
 
 end
